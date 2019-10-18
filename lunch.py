@@ -9,8 +9,16 @@ except ImportError:
     from urllib2 import urlopen
 from bs4 import BeautifulSoup
 class Lunch:
-    """Constructs the onboarding message and stores the state of which tasks were completed."""
 
+    WELCOME_BLOCK = {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": (
+                "Lunch Bot presents :blush:\n\n"
+            ),
+        },
+    }
     DIVIDER_BLOCK = {"type": "divider"}
 
     def __init__(self, channel):
@@ -50,9 +58,7 @@ class Lunch:
                 for trenner in trenners:
                     trenner.insert(1, "---------")
                 strings = list(ul.stripped_strings)
-                insert = True
-                strings[0] = "Mittags Menu für "+strings[0]
-                # print(strings)
+                strings[0] = "*Mittags Menu für "+strings[0] + "*\n"
                 return strings
 
     def get_message_payload(self):
@@ -64,9 +70,9 @@ class Lunch:
             "username": self.username,
             "icon_emoji": self.icon_emoji,
             "blocks": [
-                #self.WELCOME_BLOCK,
+                self.WELCOME_BLOCK,
+                self.DIVIDER_BLOCK,
                 *self._get_content_block(self.strings),
-                
             ],
         }
     
@@ -80,6 +86,9 @@ class Lunch:
     @staticmethod
     def _get_block(text):
         return [
-            {"type": "section", "text": {"type": "mrkdwn", "text": text}}
+            {"type": "section", "text": {"type": "mrkdwn", "text": text}},
+            {"type": "context", "elements": [
+                {"type": "mrkdwn", "text": ":information_source: *<https://www.freiraum.rest/garching/inforaum"
+                 "|Source>*"}]},
         ]
         
