@@ -10,12 +10,12 @@ from lunch import Lunch
 onboarding_tutorials_sent = {}
 
 
-def start_onboarding(web_client: slack.WebClient, user_id: str, channel: str):
+def show_lunch(web_client: slack.WebClient, user_id: str, channel: str):
     # Create a new onboarding tutorial.
-    onboarding_tutorial = Lunch(channel)
+    lunch = Lunch(channel)
 
-    # Get the onboarding message payload
-    message = onboarding_tutorial.get_message_payload()
+    # Get the lunch message payload
+    message = lunch.get_message_payload()
 
     # Post the onboarding message in Slack
     response = web_client.chat_postMessage(**message)
@@ -23,68 +23,12 @@ def start_onboarding(web_client: slack.WebClient, user_id: str, channel: str):
     # Capture the timestamp of the message we've just posted so
     # we can use it to update the message after a user
     # has completed an onboarding task.
-    onboarding_tutorial.timestamp = response["ts"]
+    lunch.timestamp = response["ts"]
 
     # Store the message sent in onboarding_tutorials_sent
     if channel not in onboarding_tutorials_sent:
         onboarding_tutorials_sent[channel] = {}
-    onboarding_tutorials_sent[channel][user_id] = onboarding_tutorial
-
-
-# ================ Team Join Event =============== #
-# When the user first joins a team, the type of the event will be 'team_join'.
-# Here we'll link the onboarding_message callback to the 'team_join' event.
-@slack.RTMClient.run_on(event="team_join")
-def onboarding_message(**payload):
-    """Create and send an onboarding welcome message to new users. Save the
-    time stamp of this message so we can update this message in the future.
-    """
-    # Get WebClient so you can communicate back to Slack.
-    web_client = payload["web_client"]
-
-    # Get the id of the Slack user associated with the incoming event
-    user_id = payload["data"]["user"]["id"]
-
-    # Open a DM with the new user.
-    response = web_client.im_open(user_id)
-    channel = response["channel"]["id"]
-
-    # Post the onboarding message.
-    start_onboarding(web_client, user_id, channel)
-
-
-# ============= Reaction Added Events ============= #
-# When a users adds an emoji reaction to the onboarding message,
-# the type of the event will be 'reaction_added'.
-# Here we'll link the update_emoji callback to the 'reaction_added' event.
-@slack.RTMClient.run_on(event="reaction_added")
-def update_emoji(**payload):
-    """Update the onboarding welcome message after receiving a "reaction_added"
-    event from Slack. Update timestamp for welcome message as well.
-    """
-    data = payload["data"]
-    web_client = payload["web_client"]
-    channel_id = data["item"]["channel"]
-    user_id = data["user"]
-
-    if channel_id not in onboarding_tutorials_sent:
-        return
-
-    # Get the original tutorial sent.
-    onboarding_tutorial = onboarding_tutorials_sent[channel_id][user_id]
-
-    # Mark the reaction task as completed.
-    onboarding_tutorial.reaction_task_completed = True
-
-    # Get the new message payload
-    message = onboarding_tutorial.get_message_payload()
-
-    # Post the updated message in Slack
-    updated_message = web_client.chat_update(**message)
-
-    # Update the timestamp saved on the onboarding tutorial object
-    onboarding_tutorial.timestamp = updated_message["ts"]
-
+    onboarding_tutorials_sent[channel][user_id] = lunch
 
 # ============== Message Events ============= #
 # When a user sends a DM, the event type will be 'message'.
@@ -99,9 +43,8 @@ def message(**payload):
     channel_id = data.get("channel")
     user_id = data.get("user")
     text = data.get("text")
-    print(text)
     if text and text.lower() == "lunch" or text.lower() == ":pretzel:":
-        return start_onboarding(web_client, user_id, channel_id)
+        return show_lunch(web_client, user_id, channel_id)
 
 
 if __name__ == "__main__":
