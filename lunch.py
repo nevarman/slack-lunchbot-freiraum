@@ -8,6 +8,8 @@ except ImportError:
     # Fall back to Python 2's urllib2
     from urllib2 import urlopen
 from bs4 import BeautifulSoup
+
+
 class Lunch:
 
     WELCOME_BLOCK = {
@@ -15,7 +17,7 @@ class Lunch:
         "text": {
             "type": "mrkdwn",
             "text": (
-                "Lunch Bot presents :blush:\n\n"
+                ":beer: Lunch Bot presents :hamburger:\n\n"
             ),
         },
     }
@@ -50,9 +52,12 @@ class Lunch:
         soup = BeautifulSoup(html, 'html.parser')
         weekplan = soup.find('div', id="weekplan")
         uls = weekplan.find_all("ul")
+        day = self.getDayOfWeek()
+        if(day == None):
+            return "Opps, something went wrong :confused:"
         for ul in uls:
             dayOfWeek = (
-                ul.find("li", class_="day_of_the_week", text=self.getDayOfWeek()))
+                ul.find("li", class_="day_of_the_week", text=day))
             if(dayOfWeek):
                 trenners = ul.find_all("li", class_="meal-trenner")
                 for trenner in trenners:
@@ -62,8 +67,7 @@ class Lunch:
                 return strings
 
     def get_message_payload(self):
-        if(self.strings == None):
-            self.strings = self.scrapFreiraum()
+        self.strings = self.scrapFreiraum()
         return {
             "ts": self.timestamp,
             "channel": self.channel,
@@ -75,14 +79,15 @@ class Lunch:
                 *self._get_content_block(self.strings),
             ],
         }
-    
+
     def _get_content_block(self, strings):
+        if(strings is not list):
+            return self._get_block(strings)
         text = ""
         for string in strings:
             text += string + "\n"
         return self._get_block(text)
 
-    
     @staticmethod
     def _get_block(text):
         return [
@@ -91,4 +96,3 @@ class Lunch:
                 {"type": "mrkdwn", "text": ":information_source: *<https://www.freiraum.rest/garching/inforaum"
                  "|Source>*"}]},
         ]
-        
