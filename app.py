@@ -54,6 +54,7 @@ if __name__ == "__main__":
     logger.addHandler(logging.StreamHandler())
     #ssl_context = ssl_lib.create_default_context(cafile=certifi.where())
     # os.environ['SLACK_BOT_TOKEN']
-    slack_token = S3Connection(os.environ['SLACK_BOT_TOKEN']).access_key
+    # S3Connection(os.environ['SLACK_BOT_TOKEN']).access_key
+    slack_token = os.environ.get('SLACK_BOT_TOKEN')
     rtm_client = slack.RTMClient(token=slack_token)
     rtm_client.start()
