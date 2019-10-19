@@ -4,7 +4,6 @@ import slack
 import ssl as ssl_lib
 import certifi
 from lunch import Lunch
-from boto.s3.connection import S3Connection
 
 # For simplicity we'll store our app data in-memory with the following data structure.
 #onboarding_tutorials_sent = {"channel": {"user_id": Lunch}}

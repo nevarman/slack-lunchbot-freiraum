@@ -17,7 +17,7 @@ class Lunch:
         "text": {
             "type": "mrkdwn",
             "text": (
-                ":beer: Lunch Bot presents :hamburger:\n\n"
+                ":beer: Lunch Bot presents :pretzel:\n\n"
             ),
         },
     }
