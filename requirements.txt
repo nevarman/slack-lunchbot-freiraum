@@ -1,3 +1,4 @@
 slackclient>=2.0.0
 certifi
 beautifulsoup4
+boto

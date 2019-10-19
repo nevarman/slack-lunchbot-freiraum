@@ -4,6 +4,7 @@ import slack
 import ssl as ssl_lib
 import certifi
 from lunch import Lunch
+from boto.s3.connection import S3Connection
 
 # For simplicity we'll store our app data in-memory with the following data structure.
 #onboarding_tutorials_sent = {"channel": {"user_id": Lunch}}
@@ -51,7 +52,8 @@ if __name__ == "__main__":
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler())
-    ssl_context = ssl_lib.create_default_context(cafile=certifi.where())
-    slack_token = os.environ['SLACK_BOT_TOKEN']
+    #ssl_context = ssl_lib.create_default_context(cafile=certifi.where())
+    # os.environ['SLACK_BOT_TOKEN']
+    slack_token = S3Connection(os.environ['SLACK_BOT_TOKEN'])
     rtm_client = slack.RTMClient(token=slack_token)
     rtm_client.start()
