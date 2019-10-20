@@ -19,7 +19,7 @@ class Notify:
             curent_time = datetime.datetime.today().now()
             current_hour = curent_time.hour
             current_minute = curent_time.minute
-            print(current_hour + ':'+current_minute)
+            print(curent_time)
             if current_hour - 11 > 0:
                 sleep_time = 24 - current_hour + 11 - (current_minute / 60)
             elif current_hour - 11 < 0:
