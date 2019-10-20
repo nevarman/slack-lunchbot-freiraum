@@ -32,7 +32,10 @@ class Notify:
             print('message sent for today-waiting till 11:00a.m next day')
             if(self.lunch is None):
                 self.lunch = Lunch(self.slack_channel)
-                postmessage = self.lunch.get_auto_message_payload()
+
+            if(self.lunch.getDayOfWeek() == None):  # weekends
+                return
+            postmessage = self.lunch.get_auto_message_payload()
             # print(postmessage)
             self.slack_client.chat_postMessage(**postmessage)
             time.sleep(sleep_time * 3600)
