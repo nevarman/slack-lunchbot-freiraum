@@ -34,6 +34,7 @@ class Notify:
                 self.lunch = Lunch(self.slack_channel)
 
             if(self.lunch.getDayOfWeek() == None):  # weekends
+                time.sleep(sleep_time * 3600)
                 return
             postmessage = self.lunch.get_auto_message_payload()
             # print(postmessage)
