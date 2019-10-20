@@ -17,7 +17,7 @@ class Lunch:
         "text": {
             "type": "mrkdwn",
             "text": (
-                ":beer: Lunch Bot presents :pretzel:\n\n"
+                ":beer: It's soon lunchtime :yum: :pretzel:\n\n"
             ),
         },
     }
@@ -67,6 +67,20 @@ class Lunch:
                 return strings
 
     def get_message_payload(self):
+        self.strings = self.scrapFreiraum()
+        return {
+            "ts": self.timestamp,
+            "channel": self.channel,
+            "username": self.username,
+            "icon_emoji": self.icon_emoji,
+            "blocks": [
+                self.WELCOME_BLOCK,
+                self.DIVIDER_BLOCK,
+                *self._get_content_block(self.strings),
+            ],
+        }
+
+    def get_auto_message_payload(self):
         self.strings = self.scrapFreiraum()
         return {
             "ts": self.timestamp,
