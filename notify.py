@@ -19,21 +19,20 @@ class Notify:
             curent_time = datetime.datetime.today().now()
             current_hour = curent_time.hour
             current_minute = curent_time.minute
-            print(curent_time)
-            if current_hour - 11 > 0:
-                sleep_time = 24 - current_hour + 11 - (current_minute / 60)
-            elif current_hour - 11 < 0:
-                sleep_time = 11 - current_hour - (current_minute / 60)
-            elif current_hour == 11:
+            # print(curent_time)
+            if current_hour - 9 > 0:
+                sleep_time = 24 - current_hour + 9 - (current_minute / 60)
+            elif current_hour - 9 < 0:
+                sleep_time = 9 - current_hour - (current_minute / 60)
+            elif current_hour == 9:
                 if current_minute == 0:
                     sleep_time = 0
                 else:
-                    sleep_time = 24 - current_hour + 11 - (current_minute / 60)
+                    sleep_time = 24 - current_hour + 9 - (current_minute / 60)
             print('message sent for today-waiting till 11:00a.m next day')
             if(self.lunch is None):
                 self.lunch = Lunch(self.slack_channel)
                 postmessage = self.lunch.get_auto_message_payload()
-            print(postmessage)
+            # print(postmessage)
             self.slack_client.chat_postMessage(**postmessage)
-            # time.sleep(sleep_time * 3600)
-            time.sleep(10)
+            time.sleep(sleep_time * 3600)
