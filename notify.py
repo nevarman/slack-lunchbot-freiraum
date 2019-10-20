@@ -19,7 +19,7 @@ class Notify:
             curent_time = datetime.datetime.today().now()
             current_hour = curent_time.hour
             current_minute = curent_time.minute
-            print(current_hour)
+            print(current_hour + ':'+current_minute)
             if current_hour - 11 > 0:
                 sleep_time = 24 - current_hour + 11 - (current_minute / 60)
             elif current_hour - 11 < 0:
@@ -35,4 +35,5 @@ class Notify:
                 postmessage = self.lunch.get_auto_message_payload()
             print(postmessage)
             self.slack_client.chat_postMessage(**postmessage)
-            time.sleep(sleep_time * 3600)
+            # time.sleep(sleep_time * 3600)
+            time.sleep(10)
