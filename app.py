@@ -4,13 +4,10 @@ import slack
 from lunch import Lunch
 from notify import Notify
 
-lunch = None
-
 
 def show_lunch(web_client: slack.WebClient, user_id: str, channel: str):
     # Create a new onboarding tutorial.
-    if(lunch is None):
-        lunch = Lunch(channel)
+    lunch = Lunch(channel)
 
     # Get the lunch message payload
     postmessage = lunch.get_message_payload()
@@ -40,8 +37,8 @@ if __name__ == "__main__":
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler())
     # notify
-    notify = Notify()
-    notify.notify_channel()
+    # notify = Notify()
+    # notify.notify_channel()
     # rtm client
     slack_token = os.environ.get('SLACK_BOT_TOKEN')
     rtm_client = slack.RTMClient(token=slack_token)

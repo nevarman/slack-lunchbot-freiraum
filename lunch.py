@@ -17,7 +17,7 @@ class Lunch:
         "text": {
             "type": "mrkdwn",
             "text": (
-                ":beer: It's soon lunchtime :yum: :pretzel:\n\n"
+                ":beer: Mahlzeit!! :pretzel: :yum:\n\n"
             ),
         },
     }
@@ -53,8 +53,6 @@ class Lunch:
         weekplan = soup.find('div', id="weekplan")
         uls = weekplan.find_all("ul")
         day = self.getDayOfWeek()
-        if(day == None):
-            return "Opps, something went wrong :confused:"
         for ul in uls:
             dayOfWeek = (
                 ul.find("li", class_="day_of_the_week", text=day))
@@ -63,7 +61,7 @@ class Lunch:
                 for trenner in trenners:
                     trenner.insert(1, "---------")
                 strings = list(ul.stripped_strings)
-                strings[0] = "*Mittags Menu für "+strings[0] + "*\n"
+                strings[0] = "*Freiraum Mittags Menu für "+strings[0] + "*\n"
                 return strings
 
     def get_message_payload(self):
@@ -80,23 +78,7 @@ class Lunch:
             ],
         }
 
-    def get_auto_message_payload(self):
-        self.strings = self.scrapFreiraum()
-        return {
-            "ts": self.timestamp,
-            "channel": self.channel,
-            "username": self.username,
-            "icon_emoji": self.icon_emoji,
-            "blocks": [
-                self.WELCOME_BLOCK,
-                self.DIVIDER_BLOCK,
-                *self._get_content_block(self.strings),
-            ],
-        }
-
     def _get_content_block(self, strings):
-        if(strings is not list):
-            return self._get_block(strings)
         text = ""
         for string in strings:
             text += string + "\n"
