@@ -12,8 +12,8 @@ class Notify:
         self.slack_token = os.environ.get('SLACK_BOT_TOKEN')
         self.slack_client = slack.WebClient(self.slack_token)
         self.slack_channel = os.environ.get('SLACK_CHANNEL')
-        self.target_hour = 22
-        self.target_min = 34
+        self.target_hour = 9
+        self.target_min = 0
         self.last_minute = -1
 
     def notify_channel(self):
