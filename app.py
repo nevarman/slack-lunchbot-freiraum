@@ -37,8 +37,8 @@ if __name__ == "__main__":
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler())
     # notify
-    # notify = Notify()
-    # notify.notify_channel()
+    notify = Notify()
+    notify.notify_channel()
     # rtm client
     slack_token = os.environ.get('SLACK_BOT_TOKEN')
     rtm_client = slack.RTMClient(token=slack_token)
