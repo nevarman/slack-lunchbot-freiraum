@@ -50,19 +50,37 @@ class Lunch:
     def scrapFreiraum(self):
         html = urlopen("https://www.freiraum.rest/garching/inforaum").read()
         soup = BeautifulSoup(html, 'html.parser')
+        day = self.getDayOfWeek()
+        # weekplan
         weekplan = soup.find('div', id="weekplan")
         uls = weekplan.find_all("ul")
-        day = self.getDayOfWeek()
+        week_strings : list
         for ul in uls:
-            dayOfWeek = (
-                ul.find("li", class_="day_of_the_week", text=day))
+            dayOfWeek = (ul.find("li", class_="day_of_the_week", text=day))
             if(dayOfWeek):
                 trenners = ul.find_all("li", class_="meal-trenner")
                 for trenner in trenners:
                     trenner.insert(1, "---------")
-                strings = list(ul.stripped_strings)
-                strings[0] = "*Freiraum Mittags Menu für "+strings[0] + "*\n"
-                return strings
+                week_strings = list(ul.stripped_strings)
+                week_strings[0] = "*Freiraum Mittags Menu für " + \
+                    week_strings[0] + "*\n"
+                #return strings
+
+        # salat plan
+        salatplan = soup.find('div', id="salatplan")
+        salat_strings : list
+        uls = salatplan.find_all("ul")
+        for ul in uls:
+            dayOfWeek = (ul.find("li", class_="day_of_the_week", text=day))
+            if(dayOfWeek):
+                trenners = ul.find_all("li", class_="salat-trenner")
+                for trenner in trenners:
+                    trenner.insert(1, "---------")
+                salat_strings = list(ul.stripped_strings)
+                salat_strings[0] = "*Salatkarte" + \
+                    salat_strings[0] + "*\n"
+
+        return week_strings + salat_strings
 
     def get_message_payload(self):
         self.strings = self.scrapFreiraum()

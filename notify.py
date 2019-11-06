@@ -3,6 +3,7 @@ import slack
 import datetime
 import time
 import threading
+import holidays
 from lunch import Lunch
 
 
@@ -22,7 +23,7 @@ class Notify:
         curent_time = datetime.datetime.today().now()
         current_hour = curent_time.hour
         current_minute = curent_time.minute
-        # print(curent_time)
+        print(self.isTodayHoliday())
         if current_hour - self.target_hour > 0:
             sleep_time = 24 - current_hour + \
                 self.target_hour - (current_minute / 60)
@@ -39,7 +40,7 @@ class Notify:
             self.last_minute = current_minute
             # print('message sent for today-waiting till 11:00a.m next day')
             lunch = Lunch(self.slack_channel)
-            if(lunch.getDayOfWeek() == None):  # weekends
+            if(lunch.getDayOfWeek() == None or self.isTodayHoliday()):  # weekends or holidays skip
                 threading.Timer(sleep_time * 3600, self.notify_channel).start()
                 return
             postmessage = lunch.get_message_payload()
@@ -47,3 +48,7 @@ class Notify:
             slack_client.chat_postMessage(**postmessage)
 
         threading.Timer(sleep_time * 3600, self.notify_channel).start()
+
+    def isTodayHoliday(self):
+        de_holidays = holidays.CountryHoliday("DE", [], "BY");   ## Bayern holidays
+        return datetime.datetime.today() in de_holidays

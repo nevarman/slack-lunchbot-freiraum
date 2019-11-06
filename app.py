@@ -6,12 +6,9 @@ from notify import Notify
 
 
 def show_lunch(web_client: slack.WebClient, user_id: str, channel: str):
-    # Create a new onboarding tutorial.
     lunch = Lunch(channel)
-
     # Get the lunch message payload
     postmessage = lunch.get_message_payload()
-
     # Post the lunch message in Slack
     web_client.chat_postMessage(**postmessage)
 
