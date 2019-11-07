@@ -18,12 +18,10 @@ class Notify:
         self.last_minute = -1
 
     def notify_channel(self):
-        # print('Worker is running..., waiting till 11:00 ')
 
         curent_time = datetime.datetime.today().now()
         current_hour = curent_time.hour
         current_minute = curent_time.minute
-        print(self.isTodayHoliday())
         if current_hour - self.target_hour > 0:
             sleep_time = 24 - current_hour + \
                 self.target_hour - (current_minute / 60)
@@ -50,5 +48,6 @@ class Notify:
         threading.Timer(sleep_time * 3600, self.notify_channel).start()
 
     def isTodayHoliday(self):
-        de_holidays = holidays.CountryHoliday("DE", [], "BY");   ## Bayern holidays
+        de_holidays = holidays.CountryHoliday(
+            "DE", [], "BY")  # Bayern holidays
         return datetime.datetime.today() in de_holidays

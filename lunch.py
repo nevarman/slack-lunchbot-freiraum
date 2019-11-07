@@ -22,6 +22,18 @@ class Lunch:
         },
     }
     DIVIDER_BLOCK = {"type": "divider"}
+    FOOTER_BLOCK = {"type": "context", "elements": [
+        {"type": "mrkdwn", "text": ":information_source: *<https://www.freiraum.rest/garching/inforaum"
+         "|Source>*"}]}
+    ERROR_BLOCK = {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": (
+                ":confused: Whopps, something went terribly wrong! :confused:\n"
+            ),
+        },
+    }
 
     def __init__(self, channel):
         self.channel = channel
@@ -54,7 +66,7 @@ class Lunch:
         # weekplan
         weekplan = soup.find('div', id="weekplan")
         uls = weekplan.find_all("ul")
-        week_strings : list
+        week_strings: list
         for ul in uls:
             dayOfWeek = (ul.find("li", class_="day_of_the_week", text=day))
             if(dayOfWeek):
@@ -62,13 +74,13 @@ class Lunch:
                 for trenner in trenners:
                     trenner.insert(1, "---------")
                 week_strings = list(ul.stripped_strings)
-                week_strings[0] = "*Freiraum Mittags Menu für " + \
-                    week_strings[0] + "*\n"
-                #return strings
+                week_strings[0] = "Freiraum Mittags Menu für " + \
+                    week_strings[0]
+                week_strings.insert(1, "---------")
 
         # salat plan
         salatplan = soup.find('div', id="salatplan")
-        salat_strings : list
+        salat_strings: list
         uls = salatplan.find_all("ul")
         for ul in uls:
             dayOfWeek = (ul.find("li", class_="day_of_the_week", text=day))
@@ -77,8 +89,9 @@ class Lunch:
                 for trenner in trenners:
                     trenner.insert(1, "---------")
                 salat_strings = list(ul.stripped_strings)
-                salat_strings[0] = "*Salatkarte" + \
-                    salat_strings[0] + "*\n"
+                salat_strings[0] = "Salatkarte " + \
+                    salat_strings[0]
+                salat_strings.insert(1, "---------")
 
         return week_strings + salat_strings
 
@@ -97,16 +110,45 @@ class Lunch:
         }
 
     def _get_content_block(self, strings):
-        text = ""
+        text = []
+        isSeperator = True
+        mainDish = ""
+        blockString = ""
+        if(len(strings) == 0):
+            text.append(self.ERROR_BLOCK)
+            return text
         for string in strings:
-            text += string + "\n"
-        return self._get_block(text)
+            if(string != "---------"):
+                if(isSeperator):
+                    mainDish = string
+                    isSeperator = False
+                else:
+                    blockString += string + " "
+            else:
+                isSeperator = True
+                if(self.getDayOfWeek() in mainDish):  # check if header
+                    text.append(self._get_header_block(mainDish))
+                else:
+                    text.append(self._get_lunch_block(mainDish))  # maindish
+                if(len(blockString) > 0):
+                    text.append(self._get_lunchcontext_block(blockString))
+                else:
+                    text.append(self.DIVIDER_BLOCK)
+                blockString = ""
+                mainDish = ""
+        text.append(self.DIVIDER_BLOCK)
+        text.append(self.FOOTER_BLOCK)
+        return text
 
     @staticmethod
-    def _get_block(text):
-        return [
-            {"type": "section", "text": {"type": "mrkdwn", "text": text}},
-            {"type": "context", "elements": [
-                {"type": "mrkdwn", "text": ":information_source: *<https://www.freiraum.rest/garching/inforaum"
-                 "|Source>*"}]},
-        ]
+    def _get_header_block(text):
+        return {"type": "section", "text": {"type": "mrkdwn", "text": "*"+text+"*"}}
+
+    @staticmethod
+    def _get_lunch_block(text):
+        return {"type": "section", "text": {"type": "mrkdwn", "text": "*<https://www.google.com/search?q="+text+"|"+text+">*"}}
+
+    @staticmethod
+    def _get_lunchcontext_block(text):
+        return {
+            "type": "context", "elements": [{"type": "mrkdwn", "text": ":pushpin: " + "_"+text+"_"}]}
