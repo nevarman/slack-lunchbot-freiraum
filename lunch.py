@@ -115,9 +115,9 @@ class Lunch:
         mainDish = ""
         blockString = ""
         if(len(strings) == 0):
-            text.append(self.ERROR_BLOCK)
+            text.append(self.ERROR_BLOCK) ## if no content show error
             return text
-        for string in strings:
+        for string in strings: ## string process
             if(string != "---------"):
                 if(isSeperator):
                     mainDish = string
@@ -125,15 +125,17 @@ class Lunch:
                 else:
                     blockString += string + " "
             else:
+                if(isSeperator): # sometimes there are no menu on one block
+                    continue
                 isSeperator = True
                 if(self.getDayOfWeek() in mainDish):  # check if header
                     text.append(self._get_header_block(mainDish))
-                else:
+                elif(len(mainDish) > 0):
                     text.append(self._get_lunch_block(mainDish))  # maindish
                 if(len(blockString) > 0):
-                    text.append(self._get_lunchcontext_block(blockString))
+                    text.append(self._get_lunchcontext_block(blockString)) # block is info
                 else:
-                    text.append(self.DIVIDER_BLOCK)
+                    text.append(self.DIVIDER_BLOCK) # add divider
                 blockString = ""
                 mainDish = ""
         text.append(self.DIVIDER_BLOCK)
